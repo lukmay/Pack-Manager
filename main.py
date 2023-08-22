@@ -152,8 +152,7 @@ class App:
             self.canvas.delete(self.current_position_dot)
 
         x, y = App.parse_coords(self.current_position.get())
-        formatted_coords = f"{x:.2f},{y:.2f}"  # Convert the coordinates to the desired format
-        self.current_position.set(formatted_coords)  # Update the StringVar
+        self.current_position.set(f"{int(x)},{int(y)}")  # Update the StringVar
 
         self.current_position_dot = self.draw_dot((x, y), color="blue")
         self.update_display()
@@ -171,7 +170,7 @@ class App:
         x = event.y * y_ratio - 800
         y = event.x * x_ratio - 1000
 
-        self.next_destination.set(f"{x:.2f},{y:.2f}")
+        self.next_destination.set(f"{int(x)},{int(y)}")
 
         self.next_dest_dot = self.draw_dot((x, y), color="red")
         self.canvas.unbind("<Button-1>")  # Unbind after placing the dot
@@ -202,7 +201,7 @@ class App:
         clipboard_content = root.clipboard_get()
         try:
             x, y = App.parse_coords(clipboard_content)
-            self.current_position.set(f"{x:.2f},{y:.2f}")
+            self.current_position.set(f"{int(x)},{int(y)}")
             self.set_current_position()
         except Exception as e:
             print(f"Clipboard content not in the expected format: {e}")
