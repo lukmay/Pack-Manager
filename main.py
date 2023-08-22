@@ -14,39 +14,53 @@ class App:
         with open(config_path, "r") as file:
             self.config = json.load(file)
 
-        # Set the PATH
+        self.configure_path()
+        self.init_vars()
+
+        self.bot = self.setup_discord_bot()
+        threading.Thread(target=self.run_bot).start()
+        self.set_root_background_to_match_theme(root)
+
+        self.setup_ui(root)
+
+    def configure_path(self):
         gs_path = self.config.get('gs_path', '')
         if gs_path:
             os.environ['PATH'] += os.pathsep + gs_path
 
-        # Variables to store values
+    def init_vars(self):
         self.next_destination = tk.StringVar()
         self.current_position = tk.StringVar()
         self.dropdown_selection = tk.StringVar(value="Nothing")
-
-        # References to dots for next destination and current position
         self.next_dest_dot = None
         self.current_position_dot = None
-
-        # Reference to the arrow
         self.arrow = None
 
-        intents = discord.Intents.default()  # Get the default Intents
-        intents.messages = True  # Subscribe to the messages event
-        intents.guilds = True  # Subscribe to the guilds event
+    def setup_discord_bot(self):
+        intents = discord.Intents.default()
+        intents.messages = True
+        intents.guilds = True
 
-        self.bot = discord.Client(intents=intents)
+        bot = discord.Client(intents=intents)
         self.bot_ready = False
         self.token = self.config["BOT_TOKEN"]
 
-        threading.Thread(target=self.run_bot).start()
-        self.set_root_background_to_match_theme(root)
-
-        # Wait for the bot to be ready
-        @self.bot.event
+        @bot.event
         async def on_ready():
-            print(f"We have logged in as {self.bot.user}")
+            print(f"We have logged in as {bot.user}")
             self.bot_ready = True
+
+        return bot
+
+    def map_coords_to_pixels(self, x, y):
+        x_ratio = self.image.width / (140 + 960)
+        y_ratio = self.image.height / (101 + 805)
+        return (x + 960) * x_ratio, (y + 805) * y_ratio
+
+    def pixels_to_map_coords(self, x, y):
+        x_ratio = (140 + 960) / self.image.width
+        y_ratio = (101 + 805) / self.image.height
+        return y * y_ratio - 805, x * x_ratio - 960
 
         # Set up UI elements
         self.setup_ui(root)
@@ -168,26 +182,18 @@ class App:
             self.canvas.delete(self.next_dest_dot)
 
         # Translate image pixel coordinates to map coordinates
-        x_ratio = (140 + 960) / self.image.width
-        y_ratio = (101 + 805) / self.image.height
+        x_map, y_map = self.pixels_to_map_coords(event.x, event.y)
 
-        x = event.y * y_ratio - 805
-        y = event.x * x_ratio - 960
+        self.next_destination.set(f"{int(x_map)},{int(y_map)}")
 
-        self.next_destination.set(f"{int(x)},{int(y)}")
-
-        self.next_dest_dot = self.draw_dot((x, y), color="red")
+        self.next_dest_dot = self.draw_dot((x_map, y_map), color="red")
         self.canvas.unbind("<Button-1>")  # Unbind after placing the dot
         self.update_display()
         self.draw_if_both_dots_present()
 
     def draw_dot(self, coords, color="red", outer_circle_radius=15, outer_circle_width=3):
         # Convert map coordinates back to pixel coordinates
-        x_ratio = self.image.width / (140 + 960)
-        y_ratio = self.image.height / (101 + 805)
-
-        x_pixel = (coords[1] + 960) * x_ratio
-        y_pixel = (coords[0] + 805) * y_ratio
+        x_pixel, y_pixel = self.map_coords_to_pixels(coords[1], coords[0])
 
         # Draw the central dot
         radius = 2
@@ -221,14 +227,8 @@ class App:
 
     def draw_arrow(self, start_coords, end_coords):
         # Convert map coordinates back to pixel coordinates for start and end points
-        x_ratio = self.image.width / (140 + 960)
-        y_ratio = self.image.height / (101 + 805)
-
-        x_start_pixel = (start_coords[1] + 960) * x_ratio
-        y_start_pixel = (start_coords[0] + 805) * y_ratio
-
-        x_end_pixel = (end_coords[1] + 960) * x_ratio
-        y_end_pixel = (end_coords[0] + 805) * y_ratio
+        x_start_pixel, y_start_pixel = self.map_coords_to_pixels(start_coords[1], start_coords[0])
+        x_end_pixel, y_end_pixel = self.map_coords_to_pixels(end_coords[1], end_coords[0])
 
         if self.arrow:
             self.canvas.delete(self.arrow)
@@ -326,8 +326,6 @@ style = ttk.Style(root)
 
 # Import the tcl file
 root.tk.call("source", "forest-dark.tcl")
-
-# Set the theme with the theme_use method
 style.theme_use("forest-dark")
 
 root.title("Pack - Manager")
