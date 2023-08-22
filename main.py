@@ -135,7 +135,9 @@ class App:
 
     def delete_next_destination(self):
         if self.next_dest_dot:
-            self.canvas.delete(self.next_dest_dot)
+            dot, circle = self.next_dest_dot  # Unpack the tuple
+            self.canvas.delete(dot)
+            self.canvas.delete(circle)
             self.next_dest_dot = None
             self.next_destination.set("")
             self.update_display()
@@ -179,7 +181,7 @@ class App:
         self.update_display()
         self.draw_if_both_dots_present()
 
-    def draw_dot(self, coords, color="red"):
+    def draw_dot(self, coords, color="red", outer_circle_radius=15, outer_circle_width=3):
         # Convert map coordinates back to pixel coordinates
         x_ratio = self.image.width / (140 + 960)
         y_ratio = self.image.height / (101 + 805)
@@ -187,10 +189,19 @@ class App:
         x_pixel = (coords[1] + 960) * x_ratio
         y_pixel = (coords[0] + 805) * y_ratio
 
-        radius = 5
-        return self.canvas.create_oval(x_pixel - radius, y_pixel - radius, x_pixel + radius, y_pixel + radius,
-                                       fill=color)
+        # Draw the central dot
+        radius = 2
+        dot = self.canvas.create_oval(x_pixel - radius, y_pixel - radius, x_pixel + radius, y_pixel + radius,
+                                      fill=color)
 
+        # Draw the outer circle
+        x1 = x_pixel - outer_circle_radius
+        y1 = y_pixel - outer_circle_radius
+        x2 = x_pixel + outer_circle_radius
+        y2 = y_pixel + outer_circle_radius
+        circle = self.canvas.create_oval(x1, y1, x2, y2, width=outer_circle_width, outline=color)
+
+        return dot, circle
     def update_display(self):
         self.display_label.config(
             text=f"Next Destination: \n{self.next_destination.get()}")
