@@ -67,8 +67,8 @@ class App:
 
         # Map
         self.image = Image.open("game_map.png").convert('RGB')
-        new_width = int(self.image.width * 1.55)
-        new_height = int(self.image.height * 1.55)
+        new_width = int(self.image.width * 0.8)
+        new_height = int(self.image.height * 0.8)
         self.image = self.image.resize((new_width, new_height))
 
         self.tk_image = ImageTk.PhotoImage(self.image)
@@ -166,11 +166,11 @@ class App:
             self.canvas.delete(self.next_dest_dot)
 
         # Translate image pixel coordinates to map coordinates
-        x_ratio = (200 + 1000) / self.image.width
-        y_ratio = (100 + 800) / self.image.height
+        x_ratio = (140 + 960) / self.image.width
+        y_ratio = (101 + 805) / self.image.height
 
-        x = event.y * y_ratio - 800
-        y = event.x * x_ratio - 1000
+        x = event.y * y_ratio - 805
+        y = event.x * x_ratio - 960
 
         self.next_destination.set(f"{int(x)},{int(y)}")
 
@@ -181,11 +181,11 @@ class App:
 
     def draw_dot(self, coords, color="red"):
         # Convert map coordinates back to pixel coordinates
-        x_ratio = self.image.width / (200 + 1000)
-        y_ratio = self.image.height / (100 + 800)
+        x_ratio = self.image.width / (140 + 960)
+        y_ratio = self.image.height / (101 + 805)
 
-        x_pixel = (coords[1] + 1000) * x_ratio
-        y_pixel = (coords[0] + 800) * y_ratio
+        x_pixel = (coords[1] + 960) * x_ratio
+        y_pixel = (coords[0] + 805) * y_ratio
 
         radius = 5
         return self.canvas.create_oval(x_pixel - radius, y_pixel - radius, x_pixel + radius, y_pixel + radius,
@@ -210,14 +210,14 @@ class App:
 
     def draw_arrow(self, start_coords, end_coords):
         # Convert map coordinates back to pixel coordinates for start and end points
-        x_ratio = self.image.width / (200 + 1000)
-        y_ratio = self.image.height / (100 + 800)
+        x_ratio = self.image.width / (140 + 960)
+        y_ratio = self.image.height / (101 + 805)
 
-        x_start_pixel = (start_coords[1] + 1000) * x_ratio
-        y_start_pixel = (start_coords[0] + 800) * y_ratio
+        x_start_pixel = (start_coords[1] + 960) * x_ratio
+        y_start_pixel = (start_coords[0] + 805) * y_ratio
 
-        x_end_pixel = (end_coords[1] + 1000) * x_ratio
-        y_end_pixel = (end_coords[0] + 800) * y_ratio
+        x_end_pixel = (end_coords[1] + 960) * x_ratio
+        y_end_pixel = (end_coords[0] + 805) * y_ratio
 
         if self.arrow:
             self.canvas.delete(self.arrow)
