@@ -34,6 +34,7 @@ class App:
         self.dropdown_selection = tk.StringVar(value="Nothing")
         self.next_dest_dot = None
         self.current_position_dot = None
+        self.previous_position_dot = None
         self.arrow = None
 
     def setup_discord_bot(self):
@@ -165,10 +166,24 @@ class App:
         root.configure(background=bg_color)
 
     def set_current_position(self):
-        # Delete old current position dot
-        if self.current_position_dot:
-            self.canvas.delete(self.current_position_dot)
+        # If there's a previous gray dot, delete it
+        if self.previous_position_dot:
+            dot, circle = self.previous_position_dot  # Unpack the tuple
+            self.canvas.delete(dot)
+            self.canvas.delete(circle)
+            self.previous_position_dot = None  # Reset the attribute
 
+        # If there's already a current position dot, make it gray
+        if self.current_position_dot:
+            dot, circle = self.current_position_dot  # Unpack the tuple
+            self.canvas.itemconfig(dot, fill="gray")  # Change dot color to gray
+            self.canvas.itemconfig(circle, outline="gray")  # Change circle color to gray
+
+            # Store the old dot in a different variable
+            self.previous_position_dot = self.current_position_dot
+            self.current_position_dot = None  # Reset the attribute
+
+        # The rest of the method remains the same
         x, y = App.parse_coords(self.current_position.get())
         self.current_position.set(f"{int(x)},{int(y)}")  # Update the StringVar
 
