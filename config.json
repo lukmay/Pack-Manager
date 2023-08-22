@@ -1,8 +1,11 @@
 {
     "BOT_TOKEN": "XXXXXXXXXX",
+    "discord_server_name": "The Isle - Pack",
+    "discord_channel": "pack",
+
+    "gs_path": "C:\\Program Files\\gs\\gs10.01.2\\bin\\",
+
     "server_values": ["EU-1", "EU-2", "EU-3"],
     "dino_values": ["Omniraptor", "Carnotaurus", "Ceratosaurus", "Troodon", "Deinosuchus", "Pteranodon", "Stegosaurus", "Dryosaurus", "Tenontosaurus", "Hypsilophodon", "Pachycephalosaurus", "Beipiaosaurus", "Gallimimus"],
-    "actions": ["Chilling", "Getting food", "Getting water", "Hunt food", "Fight", "Defense against predators", "Making Babies<3"],
-    "discord_server_name": "The Isle - Pack",
-    "discord_channel": "pack"
+    "actions": ["Chilling", "Getting food", "Getting water", "Hunt food", "Fight", "Defense against predators", "Making Babies<3"]
 }

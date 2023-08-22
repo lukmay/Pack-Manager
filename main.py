@@ -8,14 +8,16 @@ from io import BytesIO
 import keyboard
 import os
 import json
-os.environ['PATH'] += os.pathsep + 'C:\\Program Files\\gs\\gs10.01.2\\bin\\' # you might need to change this to you path
-
 
 class App:
     def __init__(self, root, config_path="config.json"):
-
         with open(config_path, "r") as file:
             self.config = json.load(file)
+
+        # Set the PATH
+        gs_path = self.config.get('gs_path', '')
+        if gs_path:
+            os.environ['PATH'] += os.pathsep + gs_path
 
         # Variables to store values
         self.next_destination = tk.StringVar()
