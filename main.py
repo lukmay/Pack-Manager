@@ -151,8 +151,11 @@ class App:
         if self.current_position_dot:
             self.canvas.delete(self.current_position_dot)
 
-        coords = eval(self.current_position.get())
-        self.current_position_dot = self.draw_dot(coords, color="blue")
+        x, y = App.parse_coords(self.current_position.get())
+        formatted_coords = f"{x:.2f},{y:.2f}"  # Convert the coordinates to the desired format
+        self.current_position.set(formatted_coords)  # Update the StringVar
+
+        self.current_position_dot = self.draw_dot((x, y), color="blue")
         self.update_display()
         self.draw_if_both_dots_present()
 
@@ -168,7 +171,7 @@ class App:
         x = event.y * y_ratio - 800
         y = event.x * x_ratio - 1000
 
-        self.next_destination.set(f"({x:.2f}, {y:.2f})")
+        self.next_destination.set(f"{x:.2f},{y:.2f}")
 
         self.next_dest_dot = self.draw_dot((x, y), color="red")
         self.canvas.unbind("<Button-1>")  # Unbind after placing the dot
@@ -198,11 +201,11 @@ class App:
         # Fetch value from clipboard and set it as current position
         clipboard_content = root.clipboard_get()
         try:
-            coords = eval(clipboard_content)
-            self.current_position.set(clipboard_content)
+            x, y = App.parse_coords(clipboard_content)
+            self.current_position.set(f"{x:.2f},{y:.2f}")
             self.set_current_position()
-        except:
-            print("Clipboard content not in the expected format")
+        except Exception as e:
+            print(f"Clipboard content not in the expected format: {e}")
 
     def draw_arrow(self, start_coords, end_coords):
         # Convert map coordinates back to pixel coordinates for start and end points
@@ -221,8 +224,8 @@ class App:
 
     def draw_if_both_dots_present(self):
         if self.next_dest_dot and self.current_position_dot:
-            next_coords = eval(self.next_destination.get())
-            current_coords = eval(self.current_position.get())
+            next_coords = self.parse_coords(self.next_destination.get())
+            current_coords = self.parse_coords(self.current_position.get())
             self.draw_arrow(current_coords, next_coords)
 
     def send_discord_message(self):
@@ -287,6 +290,21 @@ class App:
 
         # Bind the hotkey directly to the function
         keyboard.add_hotkey('ctrl+q', hotkey_action)
+
+    @staticmethod
+    def parse_coords(s):
+        # Remove any spaces and split by commas
+        coords = s.replace(" ", "").split(",")
+
+        # If we have more than 3 parts, assume the input is in the format x,xxx.xxx, y,yyy.yyy
+        if len(coords) > 3:
+            x = float(coords[0] + '.' + coords[1].split('.')[0])
+            y = float(coords[2] + '.' + coords[3].split('.')[0])
+        else:
+            x, y = float(coords[0]), float(coords[1])
+
+        return x, y
+
 
 root = tk.Tk()
 root.option_add("*tearOff", False)
