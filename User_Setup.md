@@ -31,3 +31,6 @@
 
 ![image](https://github.com/lukmay/Pack-Manager/assets/86775313/17a68692-7f17-474a-86a5-73a6942da88b)
 
+## Now Doubleklick on the pack-manager.exe
+Now you set up all.
+Just start the App and enjoi!
