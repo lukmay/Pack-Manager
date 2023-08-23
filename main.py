@@ -11,6 +11,7 @@ import json
 
 class App:
     def __init__(self, root, config_path="config.json"):
+        root.resizable(False, False)
         with open(config_path, "r") as file:
             self.config = json.load(file)
 
@@ -62,9 +63,6 @@ class App:
         x_ratio = (140 + 960) / self.image.width
         y_ratio = (101 + 805) / self.image.height
         return y * y_ratio - 805, x * x_ratio - 960
-
-        # Set up UI elements
-        self.setup_ui(root)
 
     def setup_ui(self, root):
         # Frame for Destination actions
