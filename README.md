@@ -22,9 +22,7 @@ In the game "The Isle", players team up to form dinosaur packs for enriched game
 - 🚨 **Immediate Alerts:** Instant alerts via Discord.
 
 ## **Setup**
-Whether you're a developer or a non-technical user, we've got you covered. Choose your guide below:
 
-- 🛠️ **Developer Setup:** [Detailed Developer Guide](./Developer_Setup.md)
 - 🎮 **Non-Technical Setup:** [Simple User Guide](./User_Setup.md)
 
 Built with:
